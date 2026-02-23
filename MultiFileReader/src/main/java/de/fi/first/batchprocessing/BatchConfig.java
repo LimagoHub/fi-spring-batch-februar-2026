@@ -74,7 +74,7 @@ public class BatchConfig {
                       PlatformTransactionManager transactionManager,
                       MultiResourceItemReader<Person> multiResourceReader) {
         return new StepBuilder("step1", jobRepository)
-                .<Person, Person>chunk(100, transactionManager)
+                .<Person, Person>chunk(2, transactionManager)
                 .reader(multiResourceReader)
 
                 .processor(processor())
