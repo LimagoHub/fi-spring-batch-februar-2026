@@ -1,4 +1,4 @@
-package de.fi.first.runner;
+package de.atruvia.first.runner;
 
 
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-
+@RequiredArgsConstructor
 public class AppRunner implements CommandLineRunner {
 
 
@@ -21,10 +21,7 @@ public class AppRunner implements CommandLineRunner {
 
     private  final Job job;
 
-    public AppRunner(final JobLauncher jobLauncher, final Job job) {
-        this.jobLauncher = jobLauncher;
-        this.job = job;
-    }
+
 
     @Override
     public void run(final String... args) throws Exception {
