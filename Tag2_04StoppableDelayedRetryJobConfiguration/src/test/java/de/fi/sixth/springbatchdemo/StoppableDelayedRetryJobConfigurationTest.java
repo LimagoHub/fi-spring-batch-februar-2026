@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -36,7 +37,7 @@ class StoppableDelayedRetryJobTest {
         // 1. Job asynchron starten
         Long executionId = asyncJobOperator.start(
                 StoppableDelayedRetryJobConfiguration.JOB_NAME,
-                props("OK_ODER_FEHLER", "ok")
+                props("OK_ODER_FEHLER", "ok", "ID", UUID.randomUUID().toString())
         );
 
         // 2. Mit Awaitility warten (ersetzt die problematische Hilfsmethode)
@@ -57,7 +58,7 @@ class StoppableDelayedRetryJobTest {
         // Job mit Fehlersimulation starten (damit er in den WarteStep geht)
         Long executionId = asyncJobOperator.start(
                 StoppableDelayedRetryJobConfiguration.JOB_NAME,
-                props("OK_ODER_FEHLER", "Fehler")
+                props("OK_ODER_FEHLER", "Fehler","ID", UUID.randomUUID().toString())
         );
 
         // Kurz warten, bis der Job läuft und im Warte-Loop ist

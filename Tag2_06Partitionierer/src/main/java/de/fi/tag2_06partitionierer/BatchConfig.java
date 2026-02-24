@@ -9,6 +9,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.support.H2PagingQueryProvider;
@@ -70,10 +71,16 @@ public class BatchConfig {
     }
 
     @Bean
-    public Step workerStep(JobRepository jobRepository, PlatformTransactionManager txManager, DataSource ds) {
+    public ItemProcessor<Person, Person> identityProcessor() {
+        return item -> item;   // Identity
+    }
+
+    @Bean
+    public Step workerStep(JobRepository jobRepository, PlatformTransactionManager txManager, DataSource ds, ItemProcessor<Person, Person> identityProcessor   ) {
         return new StepBuilder("workerStep", jobRepository)
                 .<Person, Person>chunk(100, txManager)
                 .reader(reader(ds, null, null))
+                .processor(identityProcessor())
                 .writer(writer(null))
                 .build();
     }

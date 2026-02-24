@@ -138,9 +138,9 @@ public class SplitFlowJobConfiguration {
 
         return new JobBuilder("meinSplitFlowJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .flow(step1)
+                .flow(splitFlow345)
                 .next(step2)
-                .next(splitFlow345)
+                //.next(splitFlow345)
                 .next(step6)
                 .next(step7)
                 .end()

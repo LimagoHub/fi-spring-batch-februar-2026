@@ -121,7 +121,7 @@ public class StoppableDelayedRetryJobConfiguration {
             if (anzahlStepExecutions > anzWiederhol) {
                 sc.setExitStatus(ExitStatus.FAILED);
             } else {
-                for (int i = 0; i < 10 && !isStopped(sc, se); i++) {
+                for (int i = 0; i < 2000 && !isStopped(sc, se); i++) {
                     System.out.print(". ");
                     Thread.sleep(100);
                 }

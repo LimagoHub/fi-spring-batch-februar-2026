@@ -31,7 +31,7 @@ public class ConditionalFlowJobConfiguration {
             String parameter = (String) jobExecution.getJobParameters().getParameters().get(OK_ODER_FEHLER).getValue();
 
             if ("ok".equalsIgnoreCase(parameter)) {
-                return new FlowExecutionStatus("GEHE_ZU_OK");
+//                return new FlowExecutionStatus("GEHE_ZU_OK");
             } else {
                 return new FlowExecutionStatus("GEHE_ZU_FEHLER");
             }
@@ -148,11 +148,8 @@ public class ConditionalFlowJobConfiguration {
                 // In Spring Batch 5 ist der RunIdIncrementer weiterhin nutzbar
                 .incrementer(new RunIdIncrementer())
                 .flow(arbeitsStep)
-                .on(ExitStatus.FAILED.getExitCode()).to(fehlerbehandlungsStep)
-                .next(abschliessenderStep)
-                .from(arbeitsStep)
-                .on("*").to(okStep)
-                .next(abschliessenderStep)
+                .on(ExitStatus.FAILED.getExitCode()).to(fehlerbehandlungsStep).next(abschliessenderStep)
+                .from(arbeitsStep).on("*").to(okStep).next(abschliessenderStep)
                 .end()
                 .build();
     }
