@@ -1,0 +1,10 @@
+
+X	java:S125
+"<This block of commented-out lines of code should be removed.(‰°ñ8ƒ™Ï«Ş1
+L	java:S106"+Replace this use of System.out by a logger.(øºÑûúÿÿÿÿ8»ñÈ«Ş1
+L	java:S106!"+Replace this use of System.out by a logger.(ßĞÈ»ùÿÿÿÿ8¼ñÈ«Ş1
+L	java:S106%"+Replace this use of System.out by a logger.(Üå³üÿÿÿÿ8½ñÈ«Ş1
+G	java:S106)"+Replace this use of System.out by a logger.(·çÍÏ8¾ñÈ«Ş1
+F	java:S106-"+Replace this use of System.out by a logger.(Èé™28é¬Î«Ş1
+K
+java:S1144$")Remove this unused private "init" method.(şñÊëÿÿÿÿÿ8¿ñÈ«Ş1
