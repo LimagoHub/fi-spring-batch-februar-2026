@@ -1,7 +1,4 @@
 [
- {"lastName":"JILL","firstName":"DOE","age":10},
- {"lastName":"JOE","firstName":"DOE","age":10},
- {"lastName":"JUSTIN","firstName":"DOE","age":10},
- {"lastName":"JANE","firstName":"DOE","age":10},
- {"lastName":"JOHN","firstName":"DOE","age":10}
+ {"lastName":"MAX","firstName":"MUSTERMANN","age":10},
+ {"lastName":"ERIKA","firstName":"MUSTERMANN","age":10}
 ]

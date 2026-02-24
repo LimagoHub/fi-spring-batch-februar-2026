@@ -46,8 +46,8 @@ class TestTest {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    //@MockitoBean
-    //private ItemReader<Person> flatFileItemReaderMock;
+    @MockitoBean
+    private ItemReader<Person> flatFileItemReaderMock;
 
     @Test
     void firsttest() throws Exception {
@@ -57,11 +57,11 @@ class TestTest {
     @Test
     void testJob(@Autowired  @Qualifier("chunk") Job job) throws Exception {
 
-        /*
+
         Mockito.when(flatFileItemReaderMock.read())
                 .thenReturn(Person.builder().firstName("Max").lastName("Mustermann").age(18).build())
                 .thenReturn(Person.builder().firstName("Erika").lastName("Mustermann").age(21).build())
-                .thenReturn(null);*/
+                .thenReturn(null);
         //System.out.println(flatFileItemReaderMock.read());
 
         JobParameters param = new JobParametersBuilder().addString("file.output", "output.json").toJobParameters();

@@ -22,6 +22,50 @@ public class ConditionalFlowJobConfiguration {
 
     public static final String OK_ODER_FEHLER = "OK_ODER_FEHLER";
 
+
+    /*
+    // --- DECIDER LOGIK ---
+    public static class MeinEntscheider implements JobExecutionDecider {
+        @Override
+        public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
+            String parameter = (String) jobExecution.getJobParameters().getParameters().get(OK_ODER_FEHLER).getValue();
+
+            if ("ok".equalsIgnoreCase(parameter)) {
+                return new FlowExecutionStatus("GEHE_ZU_OK");
+            } else {
+                return new FlowExecutionStatus("GEHE_ZU_FEHLER");
+            }
+        }
+    }
+
+    @Bean
+    public JobExecutionDecider decider() {
+        return new MeinEntscheider();
+    }
+
+    // --- JOB MIT DECIDER ---
+    @Bean
+    public Job meinConditionalFlowJobAbc(JobRepository jobRepository,
+                                         Step arbeitsStep,
+                                         JobExecutionDecider decider,
+                                         Step fehlerbehandlungsStep,
+                                         Step okStep,
+                                         Step abschliessenderStep) {
+        return new JobBuilder("jobAbc", jobRepository)
+                .start(arbeitsStep)
+                .next(decider) // Nach dem Arbeitsstep kommt der Entscheider
+                .on("GEHE_ZU_OK").to(okStep)
+                .from(decider).on("GEHE_ZU_FEHLER").to(fehlerbehandlungsStep)
+                .from(okStep).next(abschliessenderStep)
+                .from(fehlerbehandlungsStep).next(abschliessenderStep)
+                .end()
+                .build();
+    }
+}
+
+     */
+
+
     /**
      * Tasklet: Zeigt Text im Kommandozeilenfenster
      */

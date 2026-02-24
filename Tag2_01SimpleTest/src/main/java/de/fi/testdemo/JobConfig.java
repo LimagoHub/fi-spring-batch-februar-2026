@@ -73,7 +73,7 @@ public class JobConfig {
     // -----------------------------------------------------------------------------
     @Bean
     @StepScope
-    //@Profile("production")
+    @Profile("production")
     public FlatFileItemReader<Person> reader() {
         var flatFileItemReader = new FlatFileItemReaderBuilder<Person>()
                 .name("personItemReader")
