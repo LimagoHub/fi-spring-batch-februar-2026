@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -30,8 +31,8 @@ import java.util.Map;
 public class BatchConfig {
 
     @Bean
-    public ColumnRangePartitioner partitioner() {
-        return new ColumnRangePartitioner();
+    public ColumnRangePartitioner partitioner(JdbcOperations jdbcTemplate,@Value("tbl_personen") String tableName, @Value("id") String column ) {
+        return new ColumnRangePartitioner(jdbcTemplate, tableName, column);
     }
 
     @Bean
@@ -86,9 +87,9 @@ public class BatchConfig {
     }
 
     @Bean
-    public Step masterStep(JobRepository jobRepository, PlatformTransactionManager txManager, Step workerStep) {
+    public Step masterStep(JobRepository jobRepository, PlatformTransactionManager txManager, Step workerStep, ColumnRangePartitioner partitioner) {
         return new StepBuilder("masterStep", jobRepository)
-                .partitioner(workerStep.getName(), partitioner())
+                .partitioner(workerStep.getName(), partitioner)
                 .step(workerStep)
                 .gridSize(4) // Erzeugt 4 parallele Partitionen
                 .taskExecutor(new SimpleAsyncTaskExecutor())
