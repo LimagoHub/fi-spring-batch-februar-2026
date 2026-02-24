@@ -3,6 +3,11 @@ package de.fi.tag2_06partitionierer;
 
 
 
+import de.fi.tag2_06partitionierer.db.StudentRepository;
+import de.fi.tag2_06partitionierer.db.entity.StudentEntity;
+import de.fi.tag2_06partitionierer.processors.MyCompositeProcessor;
+import de.fi.tag2_06partitionierer.processors.PersonItemToUpperProcessor;
+import de.fi.tag2_06partitionierer.processors.PersonToStudentProcessor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -10,6 +15,7 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.support.H2PagingQueryProvider;
@@ -30,6 +36,8 @@ import java.util.Map;
 @Configuration
 public class BatchConfig {
 
+    static final int processing_size = 100;
+
     @Bean
     public ColumnRangePartitioner partitioner(JdbcOperations jdbcTemplate,@Value("tbl_personen") String tableName, @Value("id") String column ) {
         return new ColumnRangePartitioner(jdbcTemplate, tableName, column);
@@ -43,7 +51,7 @@ public class BatchConfig {
 
         JdbcPagingItemReader<Person> reader = new JdbcPagingItemReader<>();
         reader.setDataSource(dataSource);
-        reader.setFetchSize(100);
+        reader.setFetchSize(processing_size);
         reader.setRowMapper((rs, i) -> new Person(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name")));
 
         H2PagingQueryProvider queryProvider = new H2PagingQueryProvider();
@@ -56,9 +64,9 @@ public class BatchConfig {
         return reader;
     }
 
-    @Bean
-    @StepScope
-    public FlatFileItemWriter<Person> writer(@Value("#{stepExecutionContext['minValue']}") String min) {
+    //@Bean
+    //@StepScope
+    /*public FlatFileItemWriter<Person> writer(@Value("#{stepExecutionContext['minValue']}") String min) {
         FlatFileItemWriter<Person> writer = new FlatFileItemWriter<>();
         writer.setResource(new FileSystemResource("outputs/persons_part_" + min + ".csv"));
         writer.setAppendAllowed(false);
@@ -70,21 +78,40 @@ public class BatchConfig {
         }});
         return writer;
     }
+    */
 
     @Bean
+    @StepScope
+    public RepositoryItemWriter<StudentEntity> repositoryItemWriter(StudentRepository studentRepository) {
+        RepositoryItemWriter<StudentEntity> writer = new RepositoryItemWriter<>();
+        writer.setRepository(studentRepository);
+        writer.setMethodName("save");
+        return writer;
+    }
+    //@Bean
     public ItemProcessor<Person, Person> identityProcessor() {
         return item -> item;   // Identity
     }
 
     @Bean
-    public Step workerStep(JobRepository jobRepository, PlatformTransactionManager txManager, DataSource ds, ItemProcessor<Person, Person> identityProcessor   ) {
+    public Step workerStep(JobRepository jobRepository, PlatformTransactionManager txManager, DataSource ds, MyCompositeProcessor myCompositeProcessor, RepositoryItemWriter<StudentEntity> writer ) {
         return new StepBuilder("workerStep", jobRepository)
-                .<Person, Person>chunk(100, txManager)
+                .<Person, StudentEntity>chunk(processing_size, txManager)
                 .reader(reader(ds, null, null))
-                .processor(identityProcessor())
-                .writer(writer(null))
+                .processor(myCompositeProcessor)
+                .writer(writer)
                 .build();
     }
+
+    //@Bean
+    /*public ItemProcessor<Person,Person> createPersonItemProcessor() {
+        return new ItemProcessor<Person, Person>(){
+            @Override
+            public Person process(Person person) throws Exception {
+                return new Person(person.id(), person.firstName().toUpperCase(), person.lastName().toUpperCase());
+            }
+        }
+    }*/
 
     @Bean
     public Step masterStep(JobRepository jobRepository, PlatformTransactionManager txManager, Step workerStep, ColumnRangePartitioner partitioner) {
@@ -109,7 +136,7 @@ public class BatchConfig {
     public Job partitionJob(JobRepository jobRepository, Step masterStep, Step mergeStep) {
         return new JobBuilder("partitionJob", jobRepository)
                 .start(masterStep) // Zuerst parallel arbeiten
-                .next(mergeStep)   // Dann Dateien zusammenführen
+                //.next(mergeStep)   // Dann Dateien zusammenführen
                 .build();
     }
 /*
